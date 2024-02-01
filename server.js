@@ -1,22 +1,20 @@
-const express=require('express')
-const app=express()
-const bcrypt=require('bcrypt')
-app.use(express.json())
-const users=[]
-app.get('/users',(req,res)=>{
-    res.render("auth")
-    res.json(users)
+import express from "express";
+import bodyParser from "body-parser";
+import {dirname} from "path";
+import { fileURLToPath } from "url";
+const __dirname=dirname(fileURLToPath(import.meta.url));
+const app=express();
+const port=3000;
+app.use(bodyParser.urlencoded({extended: true}));
+app.get("/",(req,res)=>{
+    res.sendFile(__dirname+"/loginpage/auth.html");
+});
+app.get("/signup",(req,res)=>{
+    res.sendFile(__dirname+"/loginpage/signup.html");
+});
+app.post("/submit",(req,res)=>{
+    console.log(req.body);
 })
-app.post('/users',async(req,res)=>{
-    try{
-        const salt=await bcrypt.genSalt()
-        const hashedpassword=await bcrypt.hash(req.body.password,salt)
-        const user={name:req.body.name,password:hashedpassword}
-        users.push(user)
-        res.status(201).send()
-    }
-    catch{
-        res.status(500).send()
-    }
-})
-app.listen(5500)
+app.listen(port,()=>{
+    console.log(`listening on port ${port}`);
+});
